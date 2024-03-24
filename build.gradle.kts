@@ -17,6 +17,11 @@ repositories {
 
 dependencies {
     implementation(compose.desktop.currentOs)
+    implementation(libs.kotlin.test)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 compose.desktop {
