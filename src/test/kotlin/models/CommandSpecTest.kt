@@ -6,6 +6,19 @@ import org.junit.jupiter.api.assertThrows
 
 class CommandSpecTest {
     @Test
+    fun `from(A) returns the correct spec`() {
+        val actual = CommandSpec.from('A')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'A',
+            materialIconFunctionName = "arcTo",
+            numberOfArguments = 7,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `from(C) returns the correct spec`() {
         val actual = CommandSpec.from('C')
 
@@ -117,6 +130,19 @@ class CommandSpecTest {
             svgPathCommand = 'Z',
             materialIconFunctionName = "close",
             numberOfArguments = 0,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(a) returns the correct spec`() {
+        val actual = CommandSpec.from('a')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'a',
+            materialIconFunctionName = "arcToRelative",
+            numberOfArguments = 7,
         )
 
         assertEquals(expected, actual)

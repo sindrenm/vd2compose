@@ -7,6 +7,7 @@ data class CommandSpec(
 ) {
     companion object {
         private val specs = listOf(
+            CommandSpec('A', "arcTo", numberOfArguments = 7),
             CommandSpec('C', "curveTo", numberOfArguments = 6),
             CommandSpec('H', "horizontalLineTo", numberOfArguments = 1),
             CommandSpec('L', "lineTo", numberOfArguments = 2),
@@ -17,6 +18,7 @@ data class CommandSpec(
             CommandSpec('V', "verticalLineTo", numberOfArguments = 1),
             CommandSpec('Z', "close", numberOfArguments = 0),
             CommandSpec('c', "curveToRelative", numberOfArguments = 6),
+            CommandSpec('a', "arcToRelative", numberOfArguments = 7),
             CommandSpec('h', "horizontalLineToRelative", numberOfArguments = 1),
             CommandSpec('l', "lineToRelative", numberOfArguments = 2),
             CommandSpec('m', "moveToRelative", numberOfArguments = 2),

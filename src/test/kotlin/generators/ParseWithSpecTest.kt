@@ -43,6 +43,20 @@ class ParseWithSpecTest {
     }
 
     @Test
+    fun `parseWithSpec() can generate arcs`() {
+        val line = "a16.247,16.247,0,1,0,32.493,0,16.247,16.247,0,1,0,-32.493,0"
+        val spec = CommandSpec.from(line.first())
+        val actual = line.parseWithSpec(spec)
+
+        val expected = listOf(
+            "arcToRelative(16.247f, 16.247f, 0f, true, false, 32.493f, 0f)",
+            "arcToRelative(16.247f, 16.247f, 0f, true, false, -32.493f, 0f)",
+        ).joinToString("\n")
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `parseWithSpec() fails when given the wrong number of arguments`() {
         val line = "l2,-4.3,3.6,10.15,5"
         val spec = CommandSpec.from(line.first())
