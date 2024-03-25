@@ -1,16 +1,18 @@
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.unit.dp
 import generators.toImageVectorString
 import kotlinx.coroutines.delay
@@ -33,6 +35,8 @@ fun App(modifier: Modifier = Modifier) {
     var composeCode by remember { mutableStateOf("") }
 
     MaterialTheme {
+        val codeTextStyle = LocalTextStyle.current.copy(fontFamily = JetbrainsMono)
+
         Row(modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Column(
                 Modifier
@@ -73,6 +77,7 @@ fun App(modifier: Modifier = Modifier) {
                     onValueChange = { xmlCode = it },
                     label = { Text("Vector Drawable XML Code") },
                     singleLine = false,
+                    textStyle = codeTextStyle,
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 )
 
@@ -104,6 +109,7 @@ fun App(modifier: Modifier = Modifier) {
                     onValueChange = {},
                     label = { Text("Output Compose ImageVector Code") },
                     singleLine = false,
+                    textStyle = codeTextStyle,
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 )
