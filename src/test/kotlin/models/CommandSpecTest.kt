@@ -6,38 +6,12 @@ import org.junit.jupiter.api.assertThrows
 
 class CommandSpecTest {
     @Test
-    fun `from(Z) returns the correct spec`() {
-        val actual = CommandSpec.from('Z')
-
-        val expected = CommandSpec(
-            svgPathCommand = 'Z',
-            materialIconFunctionName = "close",
-            numberOfArguments = 0,
-        )
-
-        assertEquals(expected, actual)
-    }
-
-    @Test
     fun `from(C) returns the correct spec`() {
         val actual = CommandSpec.from('C')
 
         val expected = CommandSpec(
             svgPathCommand = 'C',
             materialIconFunctionName = "curveTo",
-            numberOfArguments = 6,
-        )
-
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun `from(c) returns the correct spec`() {
-        val actual = CommandSpec.from('c')
-
-        val expected = CommandSpec(
-            svgPathCommand = 'c',
-            materialIconFunctionName = "curveToRelative",
             numberOfArguments = 6,
         )
 
@@ -58,19 +32,6 @@ class CommandSpecTest {
     }
 
     @Test
-    fun `from(h) returns the correct spec`() {
-        val actual = CommandSpec.from('h')
-
-        val expected = CommandSpec(
-            svgPathCommand = 'h',
-            materialIconFunctionName = "horizontalLineToRelative",
-            numberOfArguments = 1,
-        )
-
-        assertEquals(expected, actual)
-    }
-
-    @Test
     fun `from(L) returns the correct spec`() {
         val actual = CommandSpec.from('L')
 
@@ -78,6 +39,110 @@ class CommandSpecTest {
             svgPathCommand = 'L',
             materialIconFunctionName = "lineTo",
             numberOfArguments = 2,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(M) returns the correct spec`() {
+        val actual = CommandSpec.from('M')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'M',
+            materialIconFunctionName = "moveTo",
+            numberOfArguments = 2,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(Q) returns the correct spec`() {
+        val actual = CommandSpec.from('Q')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'Q',
+            materialIconFunctionName = "quadTo",
+            numberOfArguments = 4,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(S) returns the correct spec`() {
+        val actual = CommandSpec.from('S')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'S',
+            materialIconFunctionName = "reflectiveCurveTo",
+            numberOfArguments = 4,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(T) returns the correct spec`() {
+        val actual = CommandSpec.from('T')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'T',
+            materialIconFunctionName = "reflectiveQuadTo",
+            numberOfArguments = 2,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(V) returns the correct spec`() {
+        val actual = CommandSpec.from('V')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'V',
+            materialIconFunctionName = "verticalLineTo",
+            numberOfArguments = 1,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(Z) returns the correct spec`() {
+        val actual = CommandSpec.from('Z')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'Z',
+            materialIconFunctionName = "close",
+            numberOfArguments = 0,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(c) returns the correct spec`() {
+        val actual = CommandSpec.from('c')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'c',
+            materialIconFunctionName = "curveToRelative",
+            numberOfArguments = 6,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(h) returns the correct spec`() {
+        val actual = CommandSpec.from('h')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'h',
+            materialIconFunctionName = "horizontalLineToRelative",
+            numberOfArguments = 1,
         )
 
         assertEquals(expected, actual)
@@ -97,12 +162,51 @@ class CommandSpecTest {
     }
 
     @Test
-    fun `from(M) returns the correct spec`() {
-        val actual = CommandSpec.from('M')
+    fun `from(m) returns the correct spec`() {
+        val actual = CommandSpec.from('m')
 
         val expected = CommandSpec(
-            svgPathCommand = 'M',
-            materialIconFunctionName = "moveTo",
+            svgPathCommand = 'm',
+            materialIconFunctionName = "moveToRelative",
+            numberOfArguments = 2,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(q) returns the correct spec`() {
+        val actual = CommandSpec.from('q')
+
+        val expected = CommandSpec(
+            svgPathCommand = 'q',
+            materialIconFunctionName = "quadToRelative",
+            numberOfArguments = 4,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(s) returns the correct spec`() {
+        val actual = CommandSpec.from('s')
+
+        val expected = CommandSpec(
+            svgPathCommand = 's',
+            materialIconFunctionName = "reflectiveCurveToRelative",
+            numberOfArguments = 4,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `from(t) returns the correct spec`() {
+        val actual = CommandSpec.from('t')
+
+        val expected = CommandSpec(
+            svgPathCommand = 't',
+            materialIconFunctionName = "reflectiveQuadToRelative",
             numberOfArguments = 2,
         )
 
