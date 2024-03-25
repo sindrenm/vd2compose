@@ -7,15 +7,20 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import generators.toImageVectorString
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import parser.XmlParser
 import java.net.URI
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.toPath
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -123,9 +128,20 @@ fun App(modifier: Modifier = Modifier) {
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    val coroutineScope = rememberCoroutineScope()
+                    val clipboardManager = LocalClipboardManager.current
+
                     Button(
                         onClick = {
-                            isComposeCodeCopied = true
+                            coroutineScope.launch {
+                                clipboardManager.setText(AnnotatedString(composeCode))
+
+                                isComposeCodeCopied = true
+
+                                delay(2.seconds)
+
+                                isComposeCodeCopied = false
+                            }
                         },
                         enabled = xmlCode.isNotBlank(),
                     ) {
