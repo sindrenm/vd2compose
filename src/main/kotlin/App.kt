@@ -1,30 +1,26 @@
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import generators.toImageVectorString
 import parser.XmlParser
+import java.net.URI
+import kotlin.io.path.name
+import kotlin.io.path.readText
+import kotlin.io.path.toPath
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
-fun App() {
+fun App(modifier: Modifier = Modifier) {
     var iconName by remember { mutableStateOf("") }
     var fileName by remember { mutableStateOf("") }
 
@@ -50,8 +46,33 @@ fun App() {
     }
 
     MaterialTheme {
-        Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .onExternalDrag(
+                        onDrop = {
+                            when (val dragData = it.dragData) {
+                                is DragData.FilesList -> {
+                                    val file = parseFiles(dragData.readFiles())
+
+                                    iconName = file.iconName
+                                    xmlCode = file.contents
+                                }
+
+                                is DragData.Text -> {
+                                    xmlCode = dragData.readText()
+                                }
+
+                                else -> {
+                                    error("Unknown content type: $dragData")
+                                }
+                            }
+                        },
+                    ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 OutlinedTextField(
                     value = iconName,
                     onValueChange = { iconName = it },
@@ -118,4 +139,26 @@ fun App() {
             }
         }
     }
+}
+
+fun parseFiles(filePaths: List<String>): ParsedFile {
+    if (filePaths.count() != 1) {
+        error("Currently, only one file is supported at a time")
+    }
+
+    val filePath = URI(filePaths.first()).toPath()
+
+    return ParsedFile(
+        name = filePath.name,
+        contents = filePath.readText(),
+    )
+}
+
+data class ParsedFile(val name: String, val contents: String) {
+    val iconName: String
+        get() = name
+            .replace("ic_", "")
+            .replace(".xml", "")
+            .split("_")
+            .joinToString("") { it.capitalize(Locale.current) }
 }
