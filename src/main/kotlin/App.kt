@@ -32,8 +32,6 @@ fun App(modifier: Modifier = Modifier) {
     var xmlCode by remember { mutableStateOf("") }
     var composeCode by remember { mutableStateOf("") }
 
-    var isComposeCodeCopied by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
         iconName = "Activity"
         xmlCode = """<?xml version="1.0" encoding="utf-8"?>
@@ -100,7 +98,6 @@ fun App(modifier: Modifier = Modifier) {
 
                         fileName = "$iconName.kt"
                         composeCode = vectorDrawable.toImageVectorString(iconName)
-                        isComposeCodeCopied = false
                     },
                     modifier = Modifier.align(Alignment.End),
                     enabled = iconName.isNotBlank() && xmlCode.isNotBlank(),
@@ -127,7 +124,17 @@ fun App(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 )
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    var isComposeCodeCopied by remember { mutableStateOf(false) }
+
+                    AnimatedVisibility(isComposeCodeCopied) {
+                        Text("Copied!", Modifier.padding(end = 8.dp))
+                    }
+
                     val coroutineScope = rememberCoroutineScope()
                     val clipboardManager = LocalClipboardManager.current
 
@@ -143,13 +150,20 @@ fun App(modifier: Modifier = Modifier) {
                                 isComposeCodeCopied = false
                             }
                         },
-                        enabled = xmlCode.isNotBlank(),
+                        enabled = composeCode.isNotBlank(),
                     ) {
                         Text("Copy")
                     }
 
-                    AnimatedVisibility(isComposeCodeCopied) {
-                        Text("Copied!", Modifier.padding(start = 8.dp))
+                    Button(
+                        onClick = {
+                            fileName = ""
+                            composeCode = ""
+                        },
+                        enabled = fileName.isNotBlank() || composeCode.isNotBlank(),
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Text("Clear")
                     }
                 }
             }
