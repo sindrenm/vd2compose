@@ -20,9 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import parser.XmlParser
 import java.net.URI
-import kotlin.io.path.name
-import kotlin.io.path.readText
-import kotlin.io.path.toPath
+import kotlin.io.path.*
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -254,6 +252,7 @@ private fun MultipleFilesPage(modifier: Modifier = Modifier) {
                 .fillMaxHeight()
                 .weight(1f)
                 .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column(
                 Modifier
@@ -271,12 +270,28 @@ private fun MultipleFilesPage(modifier: Modifier = Modifier) {
                 }
             }
 
-            Button(
-                onClick = {},
-                modifier = Modifier.align(Alignment.End),
+            Row(
+                Modifier.align(Alignment.End),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Save")
+                var outputDirectoryPath by remember { mutableStateOf("") }
+
+                OutlinedTextField(
+                    value = outputDirectoryPath,
+                    onValueChange = { outputDirectoryPath = it },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                )
+
+                Button(
+                    onClick = { saveIconsTo(outputDirectoryPath, imageVectorFiles) },
+                    enabled = outputDirectoryPath.isNotBlank() && imageVectorFiles.isNotEmpty(),
+                ) {
+                    Text("Save")
+                }
             }
+
         }
     }
 }
@@ -334,4 +349,22 @@ data class IconContentsFile(val name: String, val contents: String) {
             .replace(".xml", "")
             .split("_")
             .joinToString("") { it.capitalize(Locale.current) }
+}
+
+private fun saveIconsTo(dirPath: String, files: List<IconContentsFile>) {
+    val directory = URI(dirPath.withFileScheme().trim()).toPath()
+
+    directory.createDirectories()
+
+    files
+        .map { directory.resolve(it.name) to it.contents }
+        .forEach { (path, contents) -> path.writeText(contents) }
+}
+
+private fun String.withFileScheme(): String {
+    val scheme = "file:"
+
+    if (startsWith(scheme)) return this
+
+    return "$scheme$this"
 }
