@@ -23,7 +23,6 @@ import java.net.URI
 import kotlin.io.path.*
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun App(modifier: Modifier = Modifier) {
@@ -62,6 +61,8 @@ private fun SingleFilePage(
 ) {
     var iconName by remember { mutableStateOf("") }
     var fileName by remember { mutableStateOf("") }
+    var packageName by remember { mutableStateOf("") }
+    var receiverName by remember { mutableStateOf("") }
 
     var xmlCode by remember { mutableStateOf("") }
     var composeCode by remember { mutableStateOf("") }
@@ -95,13 +96,33 @@ private fun SingleFilePage(
                 ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            OutlinedTextField(
-                value = iconName,
-                onValueChange = { iconName = it },
-                label = { Text("Icon Name") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = packageName,
+                    onValueChange = { packageName = it },
+                    singleLine = true,
+                    label = { Text("Package name") },
+                    placeholder = { Text("com.sats.dna.icons") },
+                    modifier = Modifier.weight(2f),
+                )
+
+                OutlinedTextField(
+                    value = iconName,
+                    onValueChange = { iconName = it },
+                    label = { Text("Icon Name") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                )
+
+                OutlinedTextField(
+                    value = receiverName,
+                    onValueChange = { receiverName = it },
+                    singleLine = true,
+                    label = { Text("Fully qualified receiver name") },
+                    placeholder = { Text("com.sats.dna.SatsIcons") },
+                    modifier = Modifier.weight(2f),
+                )
+            }
 
             OutlinedTextField(
                 value = xmlCode,
@@ -117,10 +138,18 @@ private fun SingleFilePage(
                     val vectorDrawable = XmlParser.parse(xmlCode)
 
                     fileName = "$iconName.kt"
-                    composeCode = vectorDrawable.toImageVectorString(iconName)
+
+                    composeCode = vectorDrawable.toImageVectorString(
+                        name = iconName,
+                        packageName = packageName,
+                        receiverName = receiverName,
+                    )
                 },
                 modifier = Modifier.align(Alignment.End),
-                enabled = iconName.isNotBlank() && xmlCode.isNotBlank(),
+                enabled = packageName.isNotBlank() &&
+                    iconName.isNotBlank() &&
+                    receiverName.isNotBlank() &&
+                    xmlCode.isNotBlank(),
             ) {
                 Text("Convert")
             }
@@ -203,6 +232,7 @@ private fun MultipleFilesPage(modifier: Modifier = Modifier) {
                 .fillMaxHeight()
                 .weight(1f)
                 .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column(
                 Modifier
@@ -234,16 +264,50 @@ private fun MultipleFilesPage(modifier: Modifier = Modifier) {
                 }
             }
 
-            Button(
-                onClick = {
-                    imageVectorFiles = vectorDrawableFiles
-                        .map { it.iconName to XmlParser.parse(it.contents) }
-                        .map { (name, vectorDrawable) -> "$name.kt" to vectorDrawable.toImageVectorString(name) }
-                        .map { (name, contents) -> IconContentsFile(name, contents) }
-                },
-                modifier = Modifier.align(Alignment.End),
+            Row(
+                Modifier.align(Alignment.End),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Convert")
+                var packageName by remember { mutableStateOf("") }
+
+                OutlinedTextField(
+                    value = packageName,
+                    onValueChange = { packageName = it },
+                    singleLine = true,
+                    label = { Text("Package name") },
+                    placeholder = { Text("com.sats.dna.icons") },
+                    modifier = Modifier.weight(1f),
+                )
+
+                var receiverName by remember { mutableStateOf("") }
+
+                OutlinedTextField(
+                    value = receiverName,
+                    onValueChange = { receiverName = it },
+                    singleLine = true,
+                    label = { Text("Fully qualified receiver name") },
+                    placeholder = { Text("com.sats.dna.SatsIcons") },
+                    modifier = Modifier.weight(1f),
+                )
+
+                Button(
+                    onClick = {
+                        imageVectorFiles = vectorDrawableFiles
+                            .map { it.iconName to XmlParser.parse(it.contents) }
+                            .map { (name, vectorDrawable) ->
+                                "$name.kt" to vectorDrawable.toImageVectorString(
+                                    name = name,
+                                    packageName = packageName,
+                                    receiverName = receiverName,
+                                )
+                            }
+                            .map { (name, contents) -> IconContentsFile(name, contents) }
+                    },
+                    enabled = vectorDrawableFiles.isNotEmpty() && packageName.isNotEmpty() && receiverName.isNotEmpty(),
+                ) {
+                    Text("Convert")
+                }
             }
         }
 
@@ -291,7 +355,6 @@ private fun MultipleFilesPage(modifier: Modifier = Modifier) {
                     Text("Save")
                 }
             }
-
         }
     }
 }

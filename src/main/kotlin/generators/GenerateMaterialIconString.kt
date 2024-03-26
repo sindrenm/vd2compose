@@ -1,9 +1,13 @@
 package generators
 
+import androidx.compose.ui.text.decapitalize
+import androidx.compose.ui.text.intl.Locale
 import models.VectorDrawable
 
-fun VectorDrawable.toImageVectorString(name: String): String {
-    val imports = """
+fun VectorDrawable.toImageVectorString(name: String, packageName: String, receiverName: String): String {
+    val packageAndImports = """
+        |package $packageName
+        |
         |import androidx.compose.material.Icon
         |import androidx.compose.material.icons.materialIcon
         |import androidx.compose.runtime.Composable
@@ -13,32 +17,35 @@ fun VectorDrawable.toImageVectorString(name: String): String {
         |import androidx.compose.ui.graphics.vector.ImageVector
         |import androidx.compose.ui.graphics.vector.path
         |import androidx.compose.ui.tooling.preview.Preview
-        |import com.sats.dna.icons.SatsIcons
+        |import $receiverName
     """.trimMargin()
 
     val paths = paths.joinToString("\n\n") {
         it.toMaterialIconPathString()
     }
 
+    val simpleReceiverName = receiverName.split(".").last()
+    val backingPropertyName = "_${name.decapitalize(Locale.current)}"
+
     val property = """
         |@Suppress("UnusedReceiverParameter") // for convenient access
-        |val SatsIcons.$name: ImageVector
+        |val $simpleReceiverName.$name: ImageVector
         |    get() {
-        |        if (_$name != null) {
-        |            return _$name!!
+        |        if ($backingPropertyName != null) {
+        |            return $backingPropertyName!!
         |        }
         |
-        |        _$name = materialIcon(name = "$name") {
+        |        $backingPropertyName = materialIcon(name = "$name") {
         |            $paths
         |        }
         |
-        |        return _$name!!
+        |        return $backingPropertyName!!
         |    }
     """.trimMargin()
 
     val backingProperty = """
         |@Suppress("ObjectPropertyName")
-        |private var _$name: ImageVector? = null
+        |private var $backingPropertyName: ImageVector? = null
     """.trimMargin()
 
     val preview = """
@@ -50,7 +57,7 @@ fun VectorDrawable.toImageVectorString(name: String): String {
     """.trimMargin()
 
     return listOf(
-        imports,
+        packageAndImports,
         property,
         backingProperty,
         preview,
